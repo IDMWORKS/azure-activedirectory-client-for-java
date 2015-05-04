@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Class-Path: slf4j-api-1.7.5.jar commons-codec-1.6.jar jcip-annotations
+ -1.0.jar httpclient-4.3.3.jar oauth2-oidc-sdk-4.5.jar flexjson-3.3.ja
+ r activation-1.1.jar adal4j-0.0.3.jar nimbus-jose-jwt-3.1.2.jar json-
+ smart-1.1.1.jar mail-1.4.7.jar bcprov-jdk15on-1.51.jar lang-tag-1.4.j
+ ar commons-lang3-3.2.1.jar httpcore-4.3.2.jar gson-2.2.4.jar commons-
+ logging-1.1.3.jar
+Main-Class: 
+
