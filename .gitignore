@@ -1,0 +1,13 @@
+# Mac OS X artifacts
+Icon?
+.DS_Store
+
+# Eclipse files
+.classpath
+.project
+
+# IntelliJ files
+.idea
+*.eml
+*.iml
+
