@@ -44,6 +44,8 @@ public class AzureAdRepositoryImplTest {
     private OAuth2PermissionGrant fakePermissionGrant;
     private ServicePrincipal fakeServicePrincipal;
     private User fakeUser;
+    private Contact fakeContact;
+    private TenantDetail fakeTenantDetail;
 
     /* Setup test data */
 
@@ -91,7 +93,6 @@ public class AzureAdRepositoryImplTest {
                         props.getProperty("username"),
                         props.getProperty("password"))
         ).thenReturn(true);
-
 
         // set create responses for mock Repository
 
@@ -154,6 +155,16 @@ public class AzureAdRepositoryImplTest {
                         eq(USERS),
                         any(User.class))
         ).thenReturn(fakeUser);
+
+        // create additional fake data
+
+        // Contacts
+        fakeContact = new Contact();
+        fakeContact.setObjectId(UUID.randomUUID().toString());
+
+        // TenantDetails
+        fakeTenantDetail = new TenantDetail();
+        fakeTenantDetail.setObjectId(UUID.randomUUID().toString());
     }
 
     /* Unit Tests */
@@ -228,6 +239,19 @@ public class AzureAdRepositoryImplTest {
 
     @Test
     @Category(UnitTest.class)
+    public void mockRepoShouldUpdateApplication() {
+        try {
+            mockRepo.updateApplication(fakeApplication.getObjectId(), fakeApplication);
+            verify(mockRestClient).updateEntry(APPLICATIONS, fakeApplication.getObjectId(), fakeApplication);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
     public void mockRepoShouldGetAllContacts() {
         try {
             mockRepo.getAllContacts();
@@ -260,6 +284,19 @@ public class AzureAdRepositoryImplTest {
         try {
             mockRepo.deleteContact(oid);
             verify(mockRestClient).deleteEntry(CONTACTS, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldUpdateContact() {
+        try {
+            mockRepo.updateContact(fakeContact.getObjectId(), fakeContact);
+            verify(mockRestClient).updateEntry(CONTACTS, fakeContact.getObjectId(), fakeContact);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
@@ -316,6 +353,19 @@ public class AzureAdRepositoryImplTest {
             String oid = mockRepo.createDevice(entry);
             assertEquals(oid, fakeDevice.getObjectId());
             verify(mockRestClient).createEntry(Device.class, DEVICES, entry);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldUpdateDevice() {
+        try {
+            mockRepo.updateDevice(fakeDevice.getObjectId(), fakeDevice);
+            verify(mockRestClient).updateEntry(DEVICES, fakeDevice.getObjectId(), fakeDevice);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
@@ -408,6 +458,19 @@ public class AzureAdRepositoryImplTest {
 
     @Test
     @Category(UnitTest.class)
+    public void mockRepoShouldUpdateGroup() {
+        try {
+            mockRepo.updateGroup(fakeGroup.getObjectId(), fakeGroup);
+            verify(mockRestClient).updateEntry(GROUPS, fakeGroup.getObjectId(), fakeGroup);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
     public void mockRepoShouldGetAllOAuth2PermissionGrants() {
         try {
             mockRepo.getAllOAuth2PermissionGrants();
@@ -455,6 +518,19 @@ public class AzureAdRepositoryImplTest {
             String oid = mockRepo.createOAuth2PermissionGrant(entry);
             assertEquals(oid, fakePermissionGrant.getObjectId());
             verify(mockRestClient).createEntry(OAuth2PermissionGrant.class, OAUTH_2_PERMISSION_GRANTS, entry);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldUpdateOAuth2PermissionGrant() {
+        try {
+            mockRepo.updateOAuth2PermissionGrant(fakePermissionGrant.getObjectId(), fakePermissionGrant);
+            verify(mockRestClient).updateEntry(OAUTH_2_PERMISSION_GRANTS, fakePermissionGrant.getObjectId(), fakePermissionGrant);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
@@ -520,6 +596,19 @@ public class AzureAdRepositoryImplTest {
 
     @Test
     @Category(UnitTest.class)
+    public void mockRepoShouldUpdateServicePrincipal() {
+        try {
+            mockRepo.updateServicePrincipal(fakeServicePrincipal.getObjectId(), fakeServicePrincipal);
+            verify(mockRestClient).updateEntry(SERVICE_PRINCIPALS, fakeServicePrincipal.getObjectId(), fakeServicePrincipal);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
     public void mockRepoShouldGetAllSubscribedSkus() {
         try {
             mockRepo.getAllSubscribedSkus();
@@ -565,6 +654,19 @@ public class AzureAdRepositoryImplTest {
         try {
             mockRepo.getTenantDetail(oid);
             verify(mockRestClient).getEntry(TenantDetail.class, TENANT_DETAILS, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldUpdateTenantDetail() {
+        try {
+            mockRepo.updateTenantDetail(fakeTenantDetail.getObjectId(), fakeTenantDetail);
+            verify(mockRestClient).updateEntry(TENANT_DETAILS, fakeTenantDetail.getObjectId(), fakeTenantDetail);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
@@ -621,6 +723,19 @@ public class AzureAdRepositoryImplTest {
             String oid = mockRepo.createUser(entry);
             assertEquals(oid, fakeUser.getObjectId());
             verify(mockRestClient).createEntry(User.class, USERS, entry);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldUpdateUser() {
+        try {
+            mockRepo.updateUser(fakeUser.getObjectId(), fakeUser);
+            verify(mockRestClient).updateEntry(USERS, fakeUser.getObjectId(), fakeUser);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
