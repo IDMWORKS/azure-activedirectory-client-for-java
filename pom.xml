@@ -12,7 +12,7 @@
 
     <description>
         Azure Active Directory Client for Java gives you the ability to consume the Azure Active
-        Directory REST Graph API.
+        Directory Graph API.
     </description>
     <url>https://bitbucket.org/idmworks/azure-ad-client-library-for-java</url>
     <inceptionYear>2015</inceptionYear>
