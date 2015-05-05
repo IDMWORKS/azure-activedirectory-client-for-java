@@ -1,34 +1,10 @@
 package com.identityforge.aad.adcl4j;
 
-import com.identityforge.aad.adcl4j.io.ExcludeTransformer;
 import com.identityforge.aad.adcl4j.model.entity.*;
-import com.microsoft.aad.adal4j.AuthenticationContext;
-import com.microsoft.aad.adal4j.AuthenticationResult;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-import flexjson.transformer.DateTransformer;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.*;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.AbstractHttpMessage;
 
-import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Created by nwoolls on 3/29/15.
