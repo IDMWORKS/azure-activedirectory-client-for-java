@@ -27,8 +27,13 @@ import java.util.Map;
  */
 public class RestClientImpl implements RestClient {
 
-    private static final DateTransformer DATE_TRANSFORMER = new DateTransformer("yyyy-MM-dd'T'HH:mm:ss");
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    private static final DateTransformer DATE_TRANSFORMER = new DateTransformer(DATE_FORMAT);
     private static final String GRAPH_API_URI = "https://graph.windows.net";
+    private static final String APPLICATION_JSON = "application/json";
+    private static final String JS_CLASS_MASK = "*.class";
+    private static final String JS_VALUE_PATH = "value";
+    private static final String JS_VALUES_PATH = "values.values";
 
     private final AuthClient authClient;
     private final String tenantDomain;
@@ -44,7 +49,7 @@ public class RestClientImpl implements RestClient {
 
         String payload = new JSONSerializer()
                 // exclude class info
-                .exclude("*.class")
+                .exclude(JS_CLASS_MASK)
                 // exclude properties with NULL values
                 .transform(new ExcludeTransformer(), void.class)
                 // set date format
@@ -72,7 +77,7 @@ public class RestClientImpl implements RestClient {
 
         String payload = new JSONSerializer()
                 // exclude class info
-                .exclude("*.class")
+                .exclude(JS_CLASS_MASK)
                 // exclude properties with NULL values
                 .transform(new ExcludeTransformer(), void.class)
                 // set date format
@@ -102,11 +107,11 @@ public class RestClientImpl implements RestClient {
         String response = getRestEntity(noun, null);
 
         Collection<T> results = new JSONDeserializer<Map<String, Collection<T>>>()
-                .use("values.values", clazz)
+                .use(JS_VALUES_PATH, clazz)
                 // set date format
                 .use(Date.class, DATE_TRANSFORMER)
                 .deserialize(response)
-                .get("value");
+                .get(JS_VALUE_PATH);
 
         return results;
     }
@@ -217,6 +222,6 @@ public class RestClientImpl implements RestClient {
 
         String bearerToken = authClient.getAuthenticationResult().getAccessToken();
         httpMessage.setHeader("Authorization", String.format("Bearer %s", bearerToken));
-        httpMessage.setHeader("Content-type", "application/json");
+        httpMessage.setHeader("Content-type", APPLICATION_JSON);
     }
 }

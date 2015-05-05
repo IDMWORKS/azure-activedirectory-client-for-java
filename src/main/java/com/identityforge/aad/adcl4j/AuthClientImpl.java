@@ -16,8 +16,10 @@ import java.util.concurrent.Future;
  */
 public class AuthClientImpl implements  AuthClient {
 
-    private AuthenticationResult authenticationResult = null;
+    private static final String GRAPH_API_URI = "https://graph.windows.net";
+    private static final String AUTHORITY_URI = "https://login.windows.net/common";
 
+    private AuthenticationResult authenticationResult = null;
     private final String clientId;
     private final String username;
     private final String password;
@@ -82,7 +84,7 @@ public class AuthClientImpl implements  AuthClient {
         try {
             try {
                 service = Executors.newFixedThreadPool(1);
-                context = new AuthenticationContext("https://login.windows.net/common", false, service);
+                context = new AuthenticationContext(AUTHORITY_URI, false, service);
                 Future<AuthenticationResult> future = context.acquireTokenByRefreshToken(authenticationResult.getRefreshToken(),
                         clientId, null);
                 result = future.get();
@@ -111,9 +113,9 @@ public class AuthClientImpl implements  AuthClient {
         try {
             try {
                 service = Executors.newFixedThreadPool(1);
-                context = new AuthenticationContext("https://login.windows.net/common", false, service);
+                context = new AuthenticationContext(AUTHORITY_URI, false, service);
                 Future<AuthenticationResult> future = context.acquireToken(
-                        "https://graph.windows.net", clientId, username, password, null);
+                        GRAPH_API_URI, clientId, username, password, null);
                 result = future.get();
             } catch (InterruptedException |
                     MalformedURLException |
