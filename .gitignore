@@ -12,3 +12,4 @@ Icon?
 *.iml
 
 target
+src/test/config/creds.properties
