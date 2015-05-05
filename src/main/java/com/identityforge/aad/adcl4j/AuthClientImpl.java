@@ -58,7 +58,7 @@ public class AuthClientImpl implements  AuthClient {
         // we do not have a valid token - authenticate
         if (!valid_token) {
             authenticationResult = getAccessTokenFromUserCredentials(
-                    this.clientId, this.username, this.password);
+                    this.username, this.password);
         }
     }
 
@@ -67,7 +67,7 @@ public class AuthClientImpl implements  AuthClient {
         Boolean result = false;
 
         try {
-            AuthenticationResult response = getAccessTokenFromUserCredentials(this.clientId, username, password);
+            AuthenticationResult response = getAccessTokenFromUserCredentials(username, password);
             result = !StringUtils.isEmpty(response.getAccessToken());
         } catch (AuthenticationException e) {
             e.printStackTrace();
@@ -77,45 +77,30 @@ public class AuthClientImpl implements  AuthClient {
     }
 
     private AuthenticationResult getAccessTokenFromRefreshToken() throws AuthenticationException {
-
-        AuthenticationContext context = null;
-        AuthenticationResult result = null;
-        ExecutorService service = null;
-        try {
-            try {
-                service = Executors.newFixedThreadPool(1);
-                context = new AuthenticationContext(AUTHORITY_URI, false, service);
-                Future<AuthenticationResult> future = context.acquireTokenByRefreshToken(authenticationResult.getRefreshToken(),
-                        clientId, null);
-                result = future.get();
-            } catch (InterruptedException |
-                    MalformedURLException |
-                    ExecutionException e) {
-                e.printStackTrace();
-                throw new AuthenticationException(e.getLocalizedMessage());
-            }
-        } finally {
-            service.shutdown();
-        }
-
-        if (result == null) {
-            throw new AuthenticationException("authentication result was null");
-        }
-        return result;
+        return getAccessToken(clientId, null, null, authenticationResult.getRefreshToken());
     }
 
-    private AuthenticationResult getAccessTokenFromUserCredentials(
-            String clientId, String username, String password)
+    private AuthenticationResult getAccessTokenFromUserCredentials(String username, String password)
             throws AuthenticationException {
-        AuthenticationContext context = null;
+        return getAccessToken(clientId, username, password, null);
+    }
+
+    private AuthenticationResult getAccessToken(
+            String clientId, String username, String password, String refreshToken)
+            throws AuthenticationException {
+
+        AuthenticationContext context;
         AuthenticationResult result = null;
-        ExecutorService service = null;
+        ExecutorService service = Executors.newFixedThreadPool(1);
         try {
             try {
-                service = Executors.newFixedThreadPool(1);
                 context = new AuthenticationContext(AUTHORITY_URI, false, service);
-                Future<AuthenticationResult> future = context.acquireToken(
-                        GRAPH_API_URI, clientId, username, password, null);
+                Future<AuthenticationResult> future;
+                if (refreshToken == null) {
+                    future = context.acquireToken(GRAPH_API_URI, clientId, username, password, null);
+                } else {
+                    future = context.acquireTokenByRefreshToken(refreshToken, clientId, null);
+                }
                 result = future.get();
             } catch (InterruptedException |
                     MalformedURLException |
