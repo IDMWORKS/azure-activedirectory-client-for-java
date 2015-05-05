@@ -1,0 +1,4 @@
+clientId=my-client-id
+username=my-account@my-domain.onmicrosoft.com
+password=my-password
+tenantDomain=@my-domain.onmicrosoft.com
