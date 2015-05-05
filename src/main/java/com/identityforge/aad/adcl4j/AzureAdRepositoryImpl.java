@@ -24,9 +24,22 @@ public class AzureAdRepositoryImpl implements AzureAdRepository {
             String password,
             String tenantDomain) {
 
-        this.authClient = new AuthClientImpl(clientId, username, password);
-        this.restClient = new RestClientImpl(this.authClient, tenantDomain);
+        this(new AuthClientImpl(clientId, username, password), tenantDomain);
+    }
 
+    public AzureAdRepositoryImpl(
+            AuthClient authClient,
+            String tenantDomain) {
+
+        this(authClient, new RestClientImpl(authClient, tenantDomain));
+    }
+
+    public AzureAdRepositoryImpl(
+            AuthClient authClient,
+            RestClient restClient) {
+
+        this.authClient = authClient;
+        this.restClient = restClient;
     }
 
     public Boolean validateCredentials(String clientId, String username, String password) {
