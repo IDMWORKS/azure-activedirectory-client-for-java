@@ -24,12 +24,26 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/repo</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+
         <dependency>
-            <groupId>com.microsoft.azure</groupId>
+            <!--
+            use adal4j from local repo until our PRs are approved.
+            source code is available at https://github.com/nwoolls/azure-activedirectory-library-for-java
+            -->
+            <groupId>com.identityforge.azure</groupId>
             <artifactId>adal4j</artifactId>
-            <version>0.0.3</version>
+            <version>0.1.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
