@@ -125,6 +125,20 @@ public class AzureAdRepositoryImplTest {
 
     @Test
     @Category(UnitTest.class)
+    public void mockRepoShouldDeleteApplication() {
+        final String oid = UUID.randomUUID().toString();
+        try {
+            mockRepo.deleteApplication(oid);
+            verify(mockRestClient).deleteEntry(APPLICATIONS, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
     public void mockRepoShouldGetAllContacts() {
         try {
             mockRepo.getAllContacts();
@@ -152,6 +166,20 @@ public class AzureAdRepositoryImplTest {
 
     @Test
     @Category(UnitTest.class)
+    public void mockRepoShouldDeleteContact() {
+        final String oid = UUID.randomUUID().toString();
+        try {
+            mockRepo.deleteContact(oid);
+            verify(mockRestClient).deleteEntry(CONTACTS, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
     public void mockRepoShouldGetAllDevices() {
         try {
             mockRepo.getAllDevices();
@@ -170,6 +198,20 @@ public class AzureAdRepositoryImplTest {
         try {
             mockRepo.getDevice(oid);
             verify(mockRestClient).getEntry(Device.class, DEVICES, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldDeleteDevice() {
+        final String oid = UUID.randomUUID().toString();
+        try {
+            mockRepo.deleteDevice(oid);
+            verify(mockRestClient).deleteEntry(DEVICES, oid);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
@@ -233,6 +275,20 @@ public class AzureAdRepositoryImplTest {
 
     @Test
     @Category(UnitTest.class)
+    public void mockRepoShouldDeleteGroup() {
+        final String oid = UUID.randomUUID().toString();
+        try {
+            mockRepo.deleteGroup(oid);
+            verify(mockRestClient).deleteEntry(GROUPS, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
     public void mockRepoShouldGetAllOAuth2PermissionGrants() {
         try {
             mockRepo.getAllOAuth2PermissionGrants();
@@ -260,6 +316,20 @@ public class AzureAdRepositoryImplTest {
 
     @Test
     @Category(UnitTest.class)
+    public void mockRepoShouldDeleteOAuth2PermissionGrant() {
+        final String oid = UUID.randomUUID().toString();
+        try {
+            mockRepo.deleteOAuth2PermissionGrant(oid);
+            verify(mockRestClient).deleteEntry(OAUTH_2_PERMISSION_GRANTS, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
     public void mockRepoShouldGetAllServicePrincipals() {
         try {
             mockRepo.getAllServicePrincipals();
@@ -278,6 +348,20 @@ public class AzureAdRepositoryImplTest {
         try {
             mockRepo.getServicePrincipal(oid);
             verify(mockRestClient).getEntry(ServicePrincipal.class, SERVICE_PRINCIPALS, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldDeleteServicePrincipal() {
+        final String oid = UUID.randomUUID().toString();
+        try {
+            mockRepo.deleteServicePrincipal(oid);
+            verify(mockRestClient).deleteEntry(SERVICE_PRINCIPALS, oid);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
@@ -359,6 +443,20 @@ public class AzureAdRepositoryImplTest {
         try {
             mockRepo.getUser(oid);
             verify(mockRestClient).getEntry(User.class, USERS, oid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldDeleteUser() {
+        final String oid = UUID.randomUUID().toString();
+        try {
+            mockRepo.deleteUser(oid);
+            verify(mockRestClient).deleteEntry(USERS, oid);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
