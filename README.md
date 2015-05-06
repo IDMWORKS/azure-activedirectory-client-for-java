@@ -13,6 +13,22 @@ Access the [Azure AD Graph API](https://msdn.microsoft.com/en-us/library/azure/h
 * [TenantDetail](https://msdn.microsoft.com/en-us/library/azure/hh974467.aspx) (RU)
 * [User](https://msdn.microsoft.com/en-us/library/azure/hh974483.aspx) (CRUD)
 
+## Example
+
+```java
+AzureAdRepository repo = new AzureAdRepositoryImpl(clientId, username, password, tenantDomain);
+try {
+    Collection<User> entities = repo.getAllUsers();
+    for (User entity : entities) {
+        System.out.println(entity.getUserPrincipalName());
+    }
+} catch (IOException |
+        URISyntaxException |
+        AuthenticationException e) {
+    e.printStackTrace();
+}
+```
+
 ## Dependencies
 
 * [Azure Active Directory Authentication for Java](https://github.com/AzureAD/azure-activedirectory-library-for-java)
