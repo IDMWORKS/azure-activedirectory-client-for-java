@@ -1,6 +1,7 @@
 package com.identityforge.aad.adcl4j;
 
 import com.identityforge.aad.adcl4j.model.entity.*;
+import com.identityforge.categories.ExampleTest;
 import com.identityforge.categories.IntegrationTest;
 import com.identityforge.categories.UnitTest;
 import org.junit.Before;
@@ -932,6 +933,30 @@ public class AzureAdRepositoryImplTest {
                 URISyntaxException |
                 AuthenticationException e) {
             fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(ExampleTest.class)
+    public void exampleShouldManageUsers() {
+
+        // Setup / simplify example
+        String clientId = props.getProperty("clientId");
+        String username = props.getProperty("username");
+        String password = props.getProperty("password");
+        String tenantDomain = props.getProperty("tenantDomain");
+
+        // Example begins here
+        AzureAdRepository repo = new AzureAdRepositoryImpl(clientId, username, password, tenantDomain);
+        try {
+            Collection<User> entities = repo.getAllUsers();
+            for (User entity : entities) {
+                System.out.println(entity.getUserPrincipalName());
+            }
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            e.printStackTrace();
         }
     }
 
