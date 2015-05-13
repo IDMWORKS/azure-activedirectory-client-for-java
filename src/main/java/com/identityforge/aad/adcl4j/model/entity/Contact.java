@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Created by nwoolls on 4/2/15.
  */
-public class Contact extends Entry {
+public class Contact extends DirectoryObject {
 
     public static final String PLURAL_NAME = "contacts";
 

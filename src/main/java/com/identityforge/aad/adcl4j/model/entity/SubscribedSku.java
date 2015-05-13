@@ -5,13 +5,12 @@ import java.util.Collection;
 /**
  * Created by nwoolls on 4/4/15.
  */
-public class SubscribedSku {
+public class SubscribedSku extends DirectoryObject {
 
     public static final String PLURAL_NAME = "subscribedSkus";
 
     private String capabilityStatus;
     private Integer consumedUnits;
-    private String objectId;
     private Object prepaidUnits;
     private Collection<Object> servicePlans;
     private String skuId;
@@ -31,14 +30,6 @@ public class SubscribedSku {
 
     public void setConsumedUnits(Integer consumedUnits) {
         this.consumedUnits = consumedUnits;
-    }
-
-    public String getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
     }
 
     public Object getPrepaidUnits() {

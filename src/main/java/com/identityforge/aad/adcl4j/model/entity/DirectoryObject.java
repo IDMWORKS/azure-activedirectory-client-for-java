@@ -3,7 +3,7 @@ package com.identityforge.aad.adcl4j.model.entity;
 /**
  * Created by nwoolls on 4/2/15.
  */
-public class Entry {
+public class DirectoryObject {
     private String displayName;
     private String objectId;
     private String objectType;

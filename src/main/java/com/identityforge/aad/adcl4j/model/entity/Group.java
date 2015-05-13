@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Created by nwoolls on 4/4/15.
  */
-public class Group extends Entry {
+public class Group extends DirectoryObject {
 
     public static final String PLURAL_NAME = "groups";
 

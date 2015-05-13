@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * Created by nwoolls on 4/2/15.
  */
-public class Application extends Entry {
+public class Application extends DirectoryObject {
 
     public static final String PLURAL_NAME = "applications";
 

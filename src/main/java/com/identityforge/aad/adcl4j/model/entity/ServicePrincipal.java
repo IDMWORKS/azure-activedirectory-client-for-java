@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * Created by nwoolls on 4/4/15.
  */
-public class ServicePrincipal extends Entry {
+public class ServicePrincipal extends DirectoryObject {
 
     public static final String PLURAL_NAME = "servicePrincipals";
 

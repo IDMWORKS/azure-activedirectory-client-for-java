@@ -3,7 +3,7 @@ package com.identityforge.aad.adcl4j.model.entity;
 /**
  * Created by nwoolls on 4/2/15.
  */
-public class DirectoryRole extends Entry {
+public class DirectoryRole extends DirectoryObject {
 
     public static final String PLURAL_NAME = "directoryRoles";
 
