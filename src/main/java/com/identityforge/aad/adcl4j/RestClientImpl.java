@@ -44,6 +44,7 @@ public class RestClientImpl implements RestClient {
         this.tenantDomain = tenantDomain;
     }
 
+    @Override
     public <T> T createEntry(Class<T> clazz, String noun, Object entry)
             throws IOException, URISyntaxException, AuthenticationException {
 
@@ -67,11 +68,13 @@ public class RestClientImpl implements RestClient {
         return result;
     }
 
+    @Override
     public void deleteEntry(String noun, String oid)
             throws IOException, URISyntaxException, AuthenticationException {
         deleteRestEntity(noun, oid);
     }
 
+    @Override
     public void updateEntry(String noun, String oid, Object entry)
             throws IOException, URISyntaxException, AuthenticationException {
 
@@ -87,6 +90,7 @@ public class RestClientImpl implements RestClient {
         patchRestEntity(noun, oid, payload);
     }
 
+    @Override
     public <T> T getEntry(Class<T> clazz, String noun, String oid)
             throws IOException, URISyntaxException, AuthenticationException {
 
@@ -101,6 +105,7 @@ public class RestClientImpl implements RestClient {
         return result;
     }
 
+    @Override
     public <T> Collection<T> getAllEntries(Class<T> clazz, String noun)
             throws IOException, URISyntaxException, AuthenticationException {
 
