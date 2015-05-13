@@ -45,7 +45,7 @@ public class RestClientImpl implements RestClient {
     }
 
     @Override
-    public <T> T createEntry(Class<T> clazz, String noun, Object entry)
+    public <T> T createEntry(Class<T> clazz, String path, Object entry)
             throws IOException, URISyntaxException, AuthenticationException {
 
         String payload = new JSONSerializer()
@@ -57,7 +57,7 @@ public class RestClientImpl implements RestClient {
                 .transform(DATE_TRANSFORMER, Date.class)
                 .deepSerialize(entry);
 
-        String response = postRestEntity(noun, payload);
+        String response = postRestEntity(path, payload);
 
         T result = new JSONDeserializer<T>()
                 .use(null, clazz)
@@ -69,13 +69,13 @@ public class RestClientImpl implements RestClient {
     }
 
     @Override
-    public void deleteEntry(String noun, String oid)
+    public void deleteEntry(String path, String oid)
             throws IOException, URISyntaxException, AuthenticationException {
-        deleteRestEntity(noun, oid);
+        deleteRestEntity(path, oid);
     }
 
     @Override
-    public void updateEntry(String noun, String oid, Object entry)
+    public void updateEntry(String path, String oid, Object entry)
             throws IOException, URISyntaxException, AuthenticationException {
 
         String payload = new JSONSerializer()
@@ -87,14 +87,14 @@ public class RestClientImpl implements RestClient {
                 .transform(DATE_TRANSFORMER, Date.class)
                 .serialize(entry);
 
-        patchRestEntity(noun, oid, payload);
+        patchRestEntity(path, oid, payload);
     }
 
     @Override
-    public <T> T getEntry(Class<T> clazz, String noun, String oid)
+    public <T> T getEntry(Class<T> clazz, String path, String oid)
             throws IOException, URISyntaxException, AuthenticationException {
 
-        String response = getRestEntity(noun, oid);
+        String response = getRestEntity(path, oid);
 
         T result = new JSONDeserializer<T>()
                 .use(null, clazz)
@@ -106,10 +106,10 @@ public class RestClientImpl implements RestClient {
     }
 
     @Override
-    public <T> Collection<T> getAllEntries(Class<T> clazz, String noun)
+    public <T> Collection<T> getAllEntries(Class<T> clazz, String path)
             throws IOException, URISyntaxException, AuthenticationException {
 
-        String response = getRestEntity(noun, null);
+        String response = getRestEntity(path, null);
 
         Collection<T> results = new JSONDeserializer<Map<String, Collection<T>>>()
                 .use(JS_VALUES_PATH, clazz)
@@ -121,7 +121,7 @@ public class RestClientImpl implements RestClient {
         return results;
     }
 
-    private String getRestEntity(String noun, String oid)
+    private String getRestEntity(String path, String oid)
             throws IOException, URISyntaxException, AuthenticationException {
 
         authClient.ensureAuthenticated();
@@ -129,7 +129,7 @@ public class RestClientImpl implements RestClient {
         String result;
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
-            HttpGet httpGet = new HttpGet(buildRestUri(noun, oid));
+            HttpGet httpGet = new HttpGet(buildRestUri(path, oid));
             setHeaders(httpGet);
 
             try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
@@ -143,7 +143,7 @@ public class RestClientImpl implements RestClient {
         return result;
     }
 
-    private String deleteRestEntity(String noun, String oid)
+    private String deleteRestEntity(String path, String oid)
             throws IOException, URISyntaxException, AuthenticationException {
 
         authClient.ensureAuthenticated();
@@ -151,7 +151,7 @@ public class RestClientImpl implements RestClient {
         String result;
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
-            HttpDelete httpDelete = new HttpDelete(buildRestUri(noun, oid));
+            HttpDelete httpDelete = new HttpDelete(buildRestUri(path, oid));
             setHeaders(httpDelete);
 
             try (CloseableHttpResponse response = httpClient.execute(httpDelete)) {
@@ -165,7 +165,7 @@ public class RestClientImpl implements RestClient {
         return result;
     }
 
-    private String postRestEntity(String noun, String payload)
+    private String postRestEntity(String path, String payload)
             throws IOException, URISyntaxException, AuthenticationException{
 
         authClient.ensureAuthenticated();
@@ -173,7 +173,7 @@ public class RestClientImpl implements RestClient {
         String result;
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
-            HttpPost httpPost = new HttpPost(buildRestUri(noun, null));
+            HttpPost httpPost = new HttpPost(buildRestUri(path, null));
             setHeaders(httpPost);
             httpPost.setEntity(new StringEntity(payload));
 
@@ -190,14 +190,14 @@ public class RestClientImpl implements RestClient {
 
     // TODO - trying to clear a value (e.g. specify "" for country) returns HTTP 400
     // The JSON seems fine - {"country":""}
-    private void patchRestEntity(String noun, String oid, String payload)
+    private void patchRestEntity(String path, String oid, String payload)
             throws IOException, URISyntaxException, AuthenticationException {
 
         authClient.ensureAuthenticated();
 
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
-            HttpPatch httpPatch = new HttpPatch(buildRestUri(noun, oid));
+            HttpPatch httpPatch = new HttpPatch(buildRestUri(path, oid));
             setHeaders(httpPatch);
             httpPatch.setEntity(new StringEntity(payload));
 
@@ -209,13 +209,13 @@ public class RestClientImpl implements RestClient {
         }
     }
 
-    private URI buildRestUri(String noun, String oid) throws URISyntaxException {
+    private URI buildRestUri(String path, String oid) throws URISyntaxException {
 
         URIBuilder uriBuilder = new URIBuilder(GRAPH_API_URI);
         uriBuilder.setPath(String.format("/%s/%s/%s",
                 this.tenantDomain,
                 // not lower-case, e.g. DirectoryRoles => directoryRoles
-                StringUtils.uncapitalize(noun),
+                StringUtils.uncapitalize(path),
                 oid == null ? "" : oid));
         // oldest API version that returns immutableId
         uriBuilder.setParameter("api-version", "1.5");
