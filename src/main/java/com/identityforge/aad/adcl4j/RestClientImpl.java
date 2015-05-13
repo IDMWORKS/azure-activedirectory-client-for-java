@@ -48,6 +48,8 @@ public class RestClientImpl implements RestClient {
     public <T> T createEntry(Class<T> clazz, String path, Object entry)
             throws IOException, URISyntaxException, AuthenticationException {
 
+        T result = null;
+
         String payload = new JSONSerializer()
                 // exclude class info
                 .exclude(JS_CLASS_MASK)
@@ -56,14 +58,15 @@ public class RestClientImpl implements RestClient {
                 // set date format
                 .transform(DATE_TRANSFORMER, Date.class)
                 .deepSerialize(entry);
-
         String response = postRestEntity(path, payload);
 
-        T result = new JSONDeserializer<T>()
-                .use(null, clazz)
-                // set date format
-                .use(Date.class, DATE_TRANSFORMER)
-                .deserialize(response);
+        if (response != null) {
+            result = new JSONDeserializer<T>()
+                    .use(null, clazz)
+                            // set date format
+                    .use(Date.class, DATE_TRANSFORMER)
+                    .deserialize(response);
+        }
 
         return result;
     }
@@ -178,7 +181,9 @@ public class RestClientImpl implements RestClient {
             httpPost.setEntity(new StringEntity(payload));
 
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+                if ((response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) ||
+                        // using POST to add a member to a group returns 204
+                        (response.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT)) {
                     result = new BasicResponseHandler().handleResponse(response);
                 } else {
                     throw new HTTPException(response.getStatusLine().getStatusCode());

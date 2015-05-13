@@ -63,4 +63,9 @@ public interface AzureAdRepository {
     String createUser(User entry) throws IOException, URISyntaxException, AuthenticationException;
     void updateUser(String oid, User entry) throws IOException, URISyntaxException, AuthenticationException;
     void deleteUser(String oid) throws IOException, URISyntaxException, AuthenticationException;
+
+    Collection<DirectoryObject> getAllMembers(String groupOid) throws IOException, URISyntaxException, AuthenticationException;
+    DirectoryObject getMember(String groupOid, String oid) throws IOException, URISyntaxException, AuthenticationException;
+    void createMember(String groupOid, String oid) throws IOException, URISyntaxException, AuthenticationException;
+    void deleteMember(String groupOid, String oid) throws IOException, URISyntaxException, AuthenticationException;
 }

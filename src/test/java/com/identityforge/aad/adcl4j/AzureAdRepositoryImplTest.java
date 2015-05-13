@@ -1,5 +1,6 @@
 package com.identityforge.aad.adcl4j;
 
+import com.identityforge.aad.adcl4j.model.ObjectLink;
 import com.identityforge.aad.adcl4j.model.entity.*;
 import com.identityforge.categories.ExampleTest;
 import com.identityforge.categories.IntegrationTest;
@@ -7,6 +8,7 @@ import com.identityforge.categories.UnitTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,16 +26,18 @@ import static org.mockito.Mockito.*;
  */
 public class AzureAdRepositoryImplTest {
 
-    public static final String TENANT_DETAILS = "tenantDetails";
-    public static final String APPLICATIONS = "applications";
-    public static final String CONTACTS = "contacts";
-    public static final String DEVICES = "devices";
-    public static final String DIRECTORY_ROLES = "directoryRoles";
-    public static final String GROUPS = "groups";
-    public static final String OAUTH_2_PERMISSION_GRANTS = "oauth2PermissionGrants";
-    public static final String SERVICE_PRINCIPALS = "servicePrincipals";
-    public static final String SUBSCRIBED_SKUS = "subscribedSkus";
-    public static final String USERS = "users";
+    private final String TENANT_DETAILS = "tenantDetails";
+    private final String APPLICATIONS = "applications";
+    private final String CONTACTS = "contacts";
+    private final String DEVICES = "devices";
+    private final String DIRECTORY_ROLES = "directoryRoles";
+    private final String GROUPS = "groups";
+    private final String OAUTH_2_PERMISSION_GRANTS = "oauth2PermissionGrants";
+    private final String SERVICE_PRINCIPALS = "servicePrincipals";
+    private final String SUBSCRIBED_SKUS = "subscribedSkus";
+    private final String USERS = "users";
+    private final String MEMBERS = "members";
+    private final String GRAPH_ROOT = "https://graph.windows.net";
 
     private AzureAdRepository realRepo;
     private AzureAdRepository mockRepo;
@@ -87,7 +91,7 @@ public class AzureAdRepositoryImplTest {
 
         AuthClient mockAuthClient = mock(AuthClient.class);
         mockRestClient = mock(RestClient.class);
-        mockRepo = new AzureAdRepositoryImpl(mockAuthClient, mockRestClient);
+        mockRepo = new AzureAdRepositoryImpl(mockAuthClient, mockRestClient, props.getProperty("tenantDomain"));
 
         // setup authentication response for mock Repository
         when(mockAuthClient.validateCredentials(
@@ -744,6 +748,74 @@ public class AzureAdRepositoryImplTest {
         }
     }
 
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldGetAllMembers() {
+        final String groupOid = UUID.randomUUID().toString();
+        final String path = String.format("%s/%s/%s", GROUPS, groupOid, MEMBERS);
+        try {
+            mockRepo.getAllMembers(groupOid);
+            verify(mockRestClient).getAllEntries(DirectoryObject.class, path);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldGetMember() {
+        final String groupOid = UUID.randomUUID().toString();
+        final String memberOid = UUID.randomUUID().toString();
+        final String path = String.format("%s/%s/%s", GROUPS, groupOid, MEMBERS);
+        try {
+            mockRepo.getMember(groupOid, memberOid);
+            verify(mockRestClient).getEntry(DirectoryObject.class, path, memberOid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldDeleteMember() {
+        final String groupOid = UUID.randomUUID().toString();
+        final String memberOid = UUID.randomUUID().toString();
+        final String path = String.format("%s/%s/$links/%s", GROUPS, groupOid, MEMBERS);
+        try {
+            mockRepo.deleteMember(groupOid, memberOid);
+            verify(mockRestClient).deleteEntry(path, memberOid);
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    @Category(UnitTest.class)
+    public void mockRepoShouldCreateMember() {
+        final String groupOid = UUID.randomUUID().toString();
+        final String memberOid = UUID.randomUUID().toString();
+        String path = String.format("%s/%s/$links/%s", GROUPS, groupOid, MEMBERS);
+        String memberUrl = String.format("%s/%s/directoryObjects/%s",
+                GRAPH_ROOT, props.getProperty("tenantDomain"), memberOid);
+
+        ArgumentCaptor<ObjectLink> argument = ArgumentCaptor.forClass(ObjectLink.class);
+        try {
+            mockRepo.createMember(groupOid, memberOid);
+            verify(mockRestClient).createEntry(eq(String.class), eq(path), argument.capture());
+            assertEquals(memberUrl, argument.getValue().getUrl());
+        } catch (IOException |
+                URISyntaxException |
+                AuthenticationException e) {
+            fail(e.getLocalizedMessage());
+        }
+    }
+
     /* Integration Tests */
 
     @Test
@@ -817,6 +889,9 @@ public class AzureAdRepositoryImplTest {
             }
             assertNotNull(entity);
             assertEquals(entity.getObjectId(), entityId);
+
+            Collection<DirectoryObject> members = realRepo.getAllMembers(entityId);
+            assertTrue(members.size() > 0);
         } catch (IOException |
                 URISyntaxException |
                 AuthenticationException e) {
@@ -959,5 +1034,4 @@ public class AzureAdRepositoryImplTest {
             e.printStackTrace();
         }
     }
-
 }

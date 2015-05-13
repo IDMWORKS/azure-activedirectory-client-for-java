@@ -1,5 +1,6 @@
 package com.identityforge.aad.adcl4j;
 
+import com.identityforge.aad.adcl4j.model.ObjectLink;
 import com.identityforge.aad.adcl4j.model.entity.*;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ public class AzureAdRepositoryImpl implements AzureAdRepository {
 
     private final AuthClient authClient;
     private final RestClient restClient;
+    private final String tenantDomain;
 
     public AzureAdRepositoryImpl(
             String clientId,
@@ -31,15 +33,17 @@ public class AzureAdRepositoryImpl implements AzureAdRepository {
             AuthClient authClient,
             String tenantDomain) {
 
-        this(authClient, new RestClientImpl(authClient, tenantDomain));
+        this(authClient, new RestClientImpl(authClient, tenantDomain), tenantDomain);
     }
 
     public AzureAdRepositoryImpl(
             AuthClient authClient,
-            RestClient restClient) {
+            RestClient restClient,
+            String tenantDomain) {
 
         this.authClient = authClient;
         this.restClient = restClient;
+        this.tenantDomain = tenantDomain;
     }
 
     @Override
@@ -308,4 +312,36 @@ public class AzureAdRepositoryImpl implements AzureAdRepository {
         restClient.deleteEntry(User.PLURAL_NAME, oid);
     }
 
+    private final String MEMBERS_PATH = "members";
+
+    @Override
+    public Collection<DirectoryObject> getAllMembers(String groupOid) throws IOException, URISyntaxException, AuthenticationException {
+
+        String path = String.format("%s/%s/%s", Group.PLURAL_NAME, groupOid, MEMBERS_PATH);
+        return restClient.getAllEntries(DirectoryObject.class, path);
+    }
+
+    @Override
+    public DirectoryObject getMember(String groupOid, String oid) throws IOException, URISyntaxException, AuthenticationException {
+
+        String path = String.format("%s/%s/%s", Group.PLURAL_NAME, groupOid, MEMBERS_PATH);
+        return restClient.getEntry(DirectoryObject.class, path, oid);
+    }
+
+    @Override
+    public void createMember(String groupOid, String oid) throws IOException, URISyntaxException, AuthenticationException {
+
+        String path = String.format("%s/%s/$links/%s", Group.PLURAL_NAME, groupOid, MEMBERS_PATH);
+        String memberUrl = String.format("https://graph.windows.net/%s/directoryObjects/%s", tenantDomain, oid);
+        ObjectLink entryLink = new ObjectLink();
+        entryLink.setUrl(memberUrl);
+        restClient.createEntry(String.class, path, entryLink);
+    }
+
+    @Override
+    public void deleteMember(String groupOid, String oid) throws IOException, URISyntaxException, AuthenticationException {
+
+        String path = String.format("%s/%s/$links/%s", Group.PLURAL_NAME, groupOid, MEMBERS_PATH);
+        restClient.deleteEntry(path, oid);
+    }
 }
