@@ -88,7 +88,7 @@ public class RestClientImpl implements RestClient {
                 .transform(new ExcludeTransformer(), void.class)
                 // set date format
                 .transform(DATE_TRANSFORMER, Date.class)
-                .serialize(entry);
+                .deepSerialize(entry);
 
         patchRestEntity(path, oid, payload);
     }
